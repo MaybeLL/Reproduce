@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class k_means():
 
@@ -17,6 +17,7 @@ class k_means():
             index = int(np.random.uniform(0, numSamples))
             centroids[i, :] =self.dataset[index, :]
         return centroids
+
     def run(self):
         numSamples = self.dataset.shape[0]
         # first column stores 所在的类别
@@ -54,7 +55,28 @@ class k_means():
         print('Congratulations, cluster complete!') 
         return centroids, clusterAssment
 
-
+    def showCluster(self, centroids, clusterAssment):
+        numSamples, dim = self.dataset.shape
+        if dim != 2:
+            print("Sorry! I can not draw because the dimension of your data is not 2!") 
+            return 1
+    
+        mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
+        if self.k > len(mark):
+            print("Sorry! Your k is too large! please contact Zouxy") 
+            return 1
+    
+        # draw all samples
+        for i in np.arange(numSamples):
+            markIndex = int(clusterAssment[i, 0])
+            plt.plot(self.dataset[i, 0], self.dataset[i, 1], mark[markIndex])
+    
+        mark = ['Dr', 'Db', 'Dg', 'Dk', '^b', '+b', 'sb', 'db', '<b', 'pb']
+        # draw the centroids
+        for i in range(self.k):
+            plt.plot(centroids[i, 0], centroids[i, 1], mark[i], markersize = 12)
+    
+        plt.show()
 
 if __name__ =="__main__":
     dataSet = []
@@ -63,6 +85,8 @@ if __name__ =="__main__":
 	    lineArr = line.strip().split('\t')
 	    dataSet.append([float(lineArr[0]), float(lineArr[1])])
     dataSet = np.mat(dataSet)
+    # print(type(dataSet))
     k_means1 = k_means(3,dataSet)
     centroids, clusterAssment = k_means1.run()
     print(clusterAssment)
+    k_means1.showCluster(centroids, clusterAssment)

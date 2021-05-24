@@ -5,7 +5,7 @@
 
 import numpy as np
 from numpy.core.fromnumeric import diagonal
-
+import k_means_clustering
 
 
 
@@ -68,25 +68,33 @@ class spectral():
         V = V[:,index]
         
         F = V[:,np.arange(self.k)]       # top k个特征向量
+        # 特征向量单位化
         for i in np.arange(len(F)):
-            F[i] =F[i] / np.linalg.norm(F[i])    # F[i]和F[j]相似就会聚为一类
+            F[i] =F[i] / np.linalg.norm(F[i])    
         
+        # F的行向量组进行k-means聚类
+        # print(F)
+        F = np.mat(F)
+        kmeans1 = k_means_clustering.k_means(self.k,F)
+        centroids, clusterAssment = kmeans1.run()
+        # print(clusterAssment)
+        kmeans1.showCluster(centroids, clusterAssment)
 
 
 if __name__ == '__main__':
-    X = np.array([[1,2,3,4],[2,4,5,9],[2,3,1,5]])
-    k =3
+    X = []
+    fileIn = open('testSet.txt')
+    for line in fileIn.readlines():
+	    lineArr = line.strip().split('\t')
+	    X.append([float(lineArr[0]), float(lineArr[1])])
+    X = np.mat(X)
+    X = np.array(X)
+    print(X)
+    k =4
     spec = spectral(X,k)
     spec.run()
-    # W = calAdjacencyMatrix_RBF(X)
-    # # 计算标准阿化的拉普拉斯矩阵
-    # L = calLaplacianMatrix(W)
-    # # 求特征值和特征向量
-    # lam,V = np.linalg.eig(L)
-    # # 重新排列特征值和特征向量
-    # index = np.argsort(lam)     #获得重排索引
-    # lam = lam[index]
-    # V = V[:,index]
+
+    
 
 
 
